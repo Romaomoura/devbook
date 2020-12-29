@@ -3,6 +3,7 @@ package repositories
 import (
 	"api/src/models"
 	"database/sql"
+	"fmt"
 )
 
 //Usuarios representa um repositorio de usuários
@@ -34,4 +35,66 @@ func (repositorio Usuarios) Criar(usuario models.Usuario) (uint64, error) {
 	}
 
 	return uint64(ultimoIDInserido), nil
+}
+
+//Buscar retorna todos os usuários que atendam ao filtro nome ou nickname
+func (repositorio Usuarios) Buscar(nomeOuNickname string) ([]models.Usuario, error) {
+	nomeOuNickname = fmt.Sprintf("%%%s%%", nomeOuNickname) //%nomeOuNickname
+
+	linhas, erro := repositorio.db.Query(
+		"SELECT id, nome, nickname, email, criadoEm FROM usuarios WHERE nome LIKE ? OR nickname LIKE ?",
+		nomeOuNickname, nomeOuNickname,
+	)
+
+	if erro != nil {
+		return nil, erro
+	}
+
+	defer linhas.Close()
+
+	var usuarios []models.Usuario
+
+	for linhas.Next() {
+		var usuario models.Usuario
+
+		if erro = linhas.Scan(
+			&usuario.ID,
+			&usuario.Nome,
+			&usuario.Nickname,
+			&usuario.Email,
+			&usuario.CriadoEm,
+		); erro != nil {
+			return nil, erro
+		}
+		usuarios = append(usuarios, usuario)
+	}
+	return usuarios, nil
+
+}
+
+//BuscarPorID retorna um usuário do banco de dados
+func (repositorio Usuarios) BuscarPorID(ID uint64) (models.Usuario, error) {
+	linhas, erro := repositorio.db.Query(
+		"SELECT id, nome, nickname, email, criadoEm FROM usuarios WHERE id = ?",
+		ID,
+	)
+	if erro != nil {
+		return models.Usuario{}, nil
+	}
+	defer linhas.Close()
+
+	var usuario models.Usuario
+
+	if linhas.Next() {
+		if erro = linhas.Scan(
+			&usuario.ID,
+			&usuario.Nome,
+			&usuario.Nickname,
+			&usuario.Email,
+			&usuario.CriadoEm,
+		); erro != nil {
+			return models.Usuario{}, erro
+		}
+	}
+	return usuario, nil
 }
