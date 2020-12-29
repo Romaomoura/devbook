@@ -25,12 +25,16 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if erro = usuario.Preparar(); erro != nil {
+		responses.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
 	db, erro := dbconn.Conectar()
 	if erro != nil {
 		responses.Erro(w, http.StatusInternalServerError, erro)
 		return
 	}
-
 	defer db.Close()
 
 	repositorio := repositories.NovoRepositorioDeUsuarios(db)
