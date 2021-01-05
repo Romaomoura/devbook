@@ -34,5 +34,5 @@ func Carregar() {
 		os.Getenv("DB_SENHA"),
 		os.Getenv("DB_NOME"),
 	)
-
+	println("CONEXÃO: ", StringConexaoDB)
 }
