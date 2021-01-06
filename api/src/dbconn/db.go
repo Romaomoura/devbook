@@ -4,7 +4,7 @@ import (
 	"api/src/config"
 	"database/sql"
 
-	_ "github.com/go-sql-driver/mysql" //Driver
+	_ "github.com/go-sql-driver/mysql" //Driver de conexão
 )
 
 //Conectar abre a conexão com o banco de dados e a retornar
@@ -16,5 +16,6 @@ func Conectar() (*sql.DB, error) {
 	if erro := db.Ping(); erro != nil {
 		return nil, erro
 	}
+
 	return db, nil
 }

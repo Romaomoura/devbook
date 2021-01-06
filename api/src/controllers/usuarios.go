@@ -16,7 +16,7 @@ import (
 
 //CriarUsuario insere um usuario no banco de dados
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
-	corpoRequest, erro := ioutil.ReadAll(r.Body)
+	corpoRequisicao, erro := ioutil.ReadAll(r.Body)
 	//erro = errors.New("Deu merda!")
 	if erro != nil {
 		responses.Erro(w, http.StatusUnprocessableEntity, erro)
@@ -24,7 +24,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var usuario models.Usuario
-	if erro := json.Unmarshal(corpoRequest, &usuario); erro != nil {
+	if erro := json.Unmarshal(corpoRequisicao, &usuario); erro != nil {
 		responses.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
@@ -42,13 +42,13 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	repositorio := repositories.NovoRepositorioDeUsuarios(db)
-	usuario.ID, erro = repositorio.Criar(usuario)
+	usuarioID, erro := repositorio.Criar(usuario)
 	if erro != nil {
 		responses.Erro(w, http.StatusInternalServerError, erro)
 		return
 	}
 
-	responses.JSON(w, http.StatusCreated, usuario)
+	responses.JSON(w, http.StatusCreated, usuarioID)
 
 }
 
