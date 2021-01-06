@@ -42,13 +42,13 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	repositorio := repositories.NovoRepositorioDeUsuarios(db)
-	usuario.ID, erro = repositorio.Criar(usuario)
+	usuarioID, erro := repositorio.Criar(usuario)
 	if erro != nil {
 		responses.Erro(w, http.StatusInternalServerError, erro)
 		return
 	}
 
-	responses.JSON(w, http.StatusCreated, usuario)
+	responses.JSON(w, http.StatusCreated, usuarioID)
 
 }
 
