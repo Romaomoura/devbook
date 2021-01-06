@@ -46,9 +46,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		responses.Erro(w, http.StatusUnauthorized, erro)
 		return
 	}
+<<<<<<< HEAD
 
 	token, _ := autentication.CriarToken(usuariodb.ID)
 	fmt.Println(token)
 
+=======
+	token, _ := autentication.CriarToken(usuario.ID)
+>>>>>>> develop
 	w.Write([]byte(token))
 }
