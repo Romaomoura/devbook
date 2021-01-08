@@ -45,6 +45,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		responses.Erro(w, http.StatusUnauthorized, erro)
 		return
 	}
+
 	token, erro := autentication.CriarToken(usuario.ID)
 	if erro != nil {
 		responses.Erro(w, http.StatusInternalServerError, erro)
