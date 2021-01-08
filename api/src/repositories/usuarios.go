@@ -21,7 +21,7 @@ func (repositorio Usuarios) Criar(usuario models.Usuario) (uint64, error) {
 	statement, erro := repositorio.db.Prepare(
 		"insert into usuarios (nome, nickname, email, senha) values(?, ?, ?, ?)")
 	if erro != nil {
-		fmt.Printf("Entrou aqui!!!")
+		fmt.Println("Erro ao preparar a statement, motivo: ", erro)
 		return 0, erro
 	}
 
@@ -30,8 +30,7 @@ func (repositorio Usuarios) Criar(usuario models.Usuario) (uint64, error) {
 	fmt.Println(usuario)
 	resultado, erro := statement.Exec(usuario.Nome, usuario.Nickname, usuario.Email, usuario.Senha)
 	if erro != nil {
-		fmt.Printf("Entrou aqui!!!")
-		fmt.Println("O erro: ", erro)
+		fmt.Println("Erro ao inserir no banco, motivo: ", erro)
 		return 0, nil
 	}
 	ultimoIDInserido, erro := resultado.LastInsertId()
