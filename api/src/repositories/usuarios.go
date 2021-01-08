@@ -19,13 +19,15 @@ func NovoRepositorioDeUsuarios(db *sql.DB) *Usuarios {
 //Criar cria um usuário no banco de dados
 func (repositorio Usuarios) Criar(usuario models.Usuario) (uint64, error) {
 	statement, erro := repositorio.db.Prepare(
-		"INSERT INTO usuarios (nome, nickname, email, senha) VALUES(?,?,?,?)",
-	)
+		"insert into usuarios (nome, nickname, email, senha) values(?, ?, ?, ?)")
 	if erro != nil {
 		fmt.Println("Erro ao preparar a statement, motivo: ", erro)
 		return 0, erro
 	}
+
 	defer statement.Close()
+
+	fmt.Println(usuario)
 	resultado, erro := statement.Exec(usuario.Nome, usuario.Nickname, usuario.Email, usuario.Senha)
 	if erro != nil {
 		fmt.Println("Erro ao inserir no banco, motivo: ", erro)
