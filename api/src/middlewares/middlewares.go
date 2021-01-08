@@ -1,7 +1,8 @@
 package middlewares
 
 import (
-	"fmt"
+	"api/src/autentication"
+	"api/src/responses"
 	"log"
 	"net/http"
 )
@@ -17,7 +18,10 @@ func Logger(next http.HandlerFunc) http.HandlerFunc {
 //Autenticar verifica se o usuário ao fazer a requisição está autênticado
 func Autenticar(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Verificando autenticação...")
+		if erro := autentication.ValidarToken(r); erro != nil {
+			responses.Erro(w, http.StatusUnauthorized, erro)
+			return
+		}
 		next(w, r)
 	}
 }
