@@ -22,11 +22,13 @@ func (repositorio Usuarios) Criar(usuario models.Usuario) (uint64, error) {
 		"INSERT INTO usuarios (nome, nickname, email, senha) VALUES(?,?,?,?)",
 	)
 	if erro != nil {
+		fmt.Println("Erro ao preparar a statement, motivo: ", erro)
 		return 0, erro
 	}
 	defer statement.Close()
 	resultado, erro := statement.Exec(usuario.Nome, usuario.Nickname, usuario.Email, usuario.Senha)
 	if erro != nil {
+		fmt.Println("Erro ao inserir no banco, motivo: ", erro)
 		return 0, nil
 	}
 	ultimoIDInserido, erro := resultado.LastInsertId()
