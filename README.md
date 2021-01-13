@@ -30,5 +30,6 @@
 - [x] Validação de token,
 - [x] Extraindo usuário ID do token,
 - [x] Impedindo que o usuário Atualize ou Delete outro usuário,
+- [x] Seguir usuario,
 - [ ] Continua...
 
