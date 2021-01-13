@@ -8,6 +8,7 @@ import (
 	"api/src/responses"
 	"api/src/seguranca"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -24,8 +25,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		responses.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
-	println()
-	println(usuario.Email)
 
 	db, erro := dbconn.Conectar()
 	if erro != nil {
@@ -34,21 +33,24 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
+	//fmt.Println("ID do usuario depois da conexão >>>>  ", usuario.ID)
 	repositorio := repositories.NovoRepositorioDeUsuarios(db)
 	usuariodb, erro := repositorio.BuscarPorEmail(usuario.Email)
 	if erro != nil {
 		responses.Erro(w, http.StatusInternalServerError, erro)
 		return
 	}
+	//fmt.Println("ID banco para compara>>>>", usuariodb.ID)
 	//Compara as senhas
 	if erro = seguranca.VerrificaSenha(usuariodb.Senha, usuario.Senha); erro != nil {
 		responses.Erro(w, http.StatusUnauthorized, erro)
 		return
 	}
 
-	token, erro := autentication.CriarToken(usuario.ID)
-	if erro != nil {
-		responses.Erro(w, http.StatusInternalServerError, erro)
+	token, erro := autentication.CriarToken(usuariodb.ID)
+	//fmt.Println("ID para criar token>>>>", usuariodb.ID)
+	if erro == nil && usuariodb.ID == 0 {
+		responses.Erro(w, http.StatusInternalServerError, errors.New("Id nulo ou zero"))
 		return
 	}
 	w.Write([]byte(token))
