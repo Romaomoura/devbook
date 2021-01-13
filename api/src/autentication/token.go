@@ -14,6 +14,7 @@ import (
 
 //CriarToken retorna um token assinado com as permissões do usuario
 func CriarToken(usuarioID uint64) (string, error) {
+	fmt.Println("Criar token desse ID >>>>   ", usuarioID)
 	permissoes := jwt.MapClaims{}
 	permissoes["authorized"] = true
 	permissoes["exp"] = time.Now().Add(time.Hour * 6).Unix()
@@ -66,7 +67,7 @@ func ExtrairUsuarioID(r *http.Request) (uint64, error) {
 		if erro != nil {
 			return 0, erro
 		}
-
+		fmt.Println("Esse é o ID", usuarioID)
 		return usuarioID, nil
 	}
 
