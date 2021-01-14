@@ -17,7 +17,7 @@ func NovoRepositorioDeUsuarios(db *sql.DB) *Usuarios {
 }
 
 //Criar cria um usuário no banco de dados
-func (repositorio Usuarios) Criar(usuario models.Usuario) (uint64, error) {
+func (repositorio Usuarios) Criar(seguindo models.Usuario) (uint64, error) {
 	statement, erro := repositorio.db.Prepare(
 		"insert into usuarios (nome, nickname, email, senha) values(?, ?, ?, ?)")
 	if erro != nil {
@@ -27,8 +27,8 @@ func (repositorio Usuarios) Criar(usuario models.Usuario) (uint64, error) {
 
 	defer statement.Close()
 
-	fmt.Println(usuario)
-	resultado, erro := statement.Exec(usuario.Nome, usuario.Nickname, usuario.Email, usuario.Senha)
+	fmt.Println(seguindo)
+	resultado, erro := statement.Exec(seguindo.Nome, seguindo.Nickname, seguindo.Email, seguindo.Senha)
 	if erro != nil {
 		fmt.Println("Erro ao inserir no banco, motivo: ", erro)
 		return 0, nil
@@ -59,18 +59,18 @@ func (repositorio Usuarios) Buscar(nomeOuNickname string) ([]models.Usuario, err
 	var usuarios []models.Usuario
 
 	for linhas.Next() {
-		var usuario models.Usuario
+		var seguindo models.Usuario
 
 		if erro = linhas.Scan(
-			&usuario.ID,
-			&usuario.Nome,
-			&usuario.Nickname,
-			&usuario.Email,
-			&usuario.CriadoEm,
+			&seguindo.ID,
+			&seguindo.Nome,
+			&seguindo.Nickname,
+			&seguindo.Email,
+			&seguindo.CriadoEm,
 		); erro != nil {
 			return nil, erro
 		}
-		usuarios = append(usuarios, usuario)
+		usuarios = append(usuarios, seguindo)
 	}
 	return usuarios, nil
 
@@ -87,24 +87,24 @@ func (repositorio Usuarios) BuscarPorID(ID uint64) (models.Usuario, error) {
 	}
 	defer linhas.Close()
 
-	var usuario models.Usuario
+	var seguindo models.Usuario
 
 	if linhas.Next() {
 		if erro = linhas.Scan(
-			&usuario.ID,
-			&usuario.Nome,
-			&usuario.Nickname,
-			&usuario.Email,
-			&usuario.CriadoEm,
+			&seguindo.ID,
+			&seguindo.Nome,
+			&seguindo.Nickname,
+			&seguindo.Email,
+			&seguindo.CriadoEm,
 		); erro != nil {
 			return models.Usuario{}, erro
 		}
 	}
-	return usuario, nil
+	return seguindo, nil
 }
 
 //Atualizar altera as informações de um usuário no banco de dados
-func (repositorio Usuarios) Atualizar(ID uint64, usuario models.Usuario) error {
+func (repositorio Usuarios) Atualizar(ID uint64, seguindo models.Usuario) error {
 	statement, erro := repositorio.db.Prepare(
 		"UPDATE usuarios SET nome = ?, nickname = ?, email = ? WHERE id = ?",
 	)
@@ -113,7 +113,7 @@ func (repositorio Usuarios) Atualizar(ID uint64, usuario models.Usuario) error {
 	}
 	defer statement.Close()
 
-	if _, erro = statement.Exec(usuario.Nome, usuario.Nickname, usuario.Email, ID); erro != nil {
+	if _, erro = statement.Exec(seguindo.Nome, seguindo.Nickname, seguindo.Email, ID); erro != nil {
 		return erro
 	}
 
@@ -144,30 +144,112 @@ func (repositorio Usuarios) BuscarPorEmail(email string) (models.Usuario, error)
 	}
 	defer linha.Close()
 
-	var usuario models.Usuario
+	var seguindo models.Usuario
 
 	if linha.Next() {
-		if erro = linha.Scan(&usuario.ID, &usuario.Senha); erro != nil {
+		if erro = linha.Scan(&seguindo.ID, &seguindo.Senha); erro != nil {
 			return models.Usuario{}, erro
 		}
 	}
-	//fmt.Println(">Busca>>>>>", usuario.ID)
-	return usuario, nil
+	//fmt.Println(">Busca>>>>>", seguindo.ID)
+	return seguindo, nil
 
 }
 
 //Seguir permite que um usuário siga outro
-func (repositorio Usuarios) Seguir(usuarioID, seguidorID uint64) error {
+func (repositorio Usuarios) Seguir(usuarioID, seguindoID uint64) error {
 	statement, erro := repositorio.db.Prepare(
-		"insert ignore into seguidores (usuario_id, seguidor_id) values (?, ?)",
+		"insert ignore into seguindoes (usuario_id, seguindo_id) values (?, ?)",
 	)
 	if erro != nil {
 		return erro
 	}
 	defer statement.Close()
-	if _, erro = statement.Exec(usuarioID, seguidorID); erro != nil {
+	if _, erro = statement.Exec(usuarioID, seguindoID); erro != nil {
 		return erro
 	}
 
 	return nil
+}
+
+//DeixarDeSeguir permite que um usuário deixe de seguir outro
+func (repositorio Usuarios) DeixarDeSeguir(usuarioID, seguindoID uint64) error {
+	statement, erro := repositorio.db.Prepare(
+		"delete from seguindoes where usuario_id = ? and seguindo_id = ?",
+	)
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+	if _, erro = statement.Exec(usuarioID, seguindoID); erro != nil {
+		return erro
+	}
+
+	return nil
+}
+
+//BuscarSeguidores retorna todos os seguindoes de um usuário
+func (repositorio Usuarios) BuscarSeguidores(usuarioID uint64) ([]models.Usuario, error) {
+	linhas, erro := repositorio.db.Query(`
+		select u.id, u.nome, u.nickname, u.email, u.criadoEm from usuarios u 
+		inner join seguidores s on u.id = s.seguidor_id 
+		where s.usuario_id = ? `, usuarioID)
+
+	if erro != nil {
+		return nil, erro
+	}
+
+	defer linhas.Close()
+
+	var seguidores []models.Usuario
+
+	for linhas.Next() {
+		var seguindo models.Usuario
+
+		if erro = linhas.Scan(
+			&seguindo.ID,
+			&seguindo.Nome,
+			&seguindo.Nickname,
+			&seguindo.Email,
+			&seguindo.CriadoEm,
+		); erro != nil {
+			return nil, erro
+		}
+		seguidores = append(seguidores, seguindo)
+	}
+	return seguidores, nil
+
+}
+
+//BuscarSeguindo retorna todos os usuários que um determinado usuário segue
+func (repositorio Usuarios) BuscarSeguindo(usuarioID uint64) ([]models.Usuario, error) {
+	linhas, erro := repositorio.db.Query(`
+		select u.id, u.nome, u.nickname, u.email, u.criadoEm from usuarios u 
+		inner join seguidores s on u.id = s.usuario_id 
+		where s.seguidor_id = ? `, usuarioID)
+
+	if erro != nil {
+		return nil, erro
+	}
+
+	defer linhas.Close()
+
+	var usuarios []models.Usuario
+
+	for linhas.Next() {
+		var seguindo models.Usuario
+
+		if erro = linhas.Scan(
+			&seguindo.ID,
+			&seguindo.Nome,
+			&seguindo.Nickname,
+			&seguindo.Email,
+			&seguindo.CriadoEm,
+		); erro != nil {
+			return nil, erro
+		}
+		usuarios = append(usuarios, seguindo)
+	}
+	return usuarios, nil
+
 }
