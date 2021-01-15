@@ -35,5 +35,6 @@
 - [x] Deixar de seguir usuário,
 - [x] Buscar seguidores,
 - [x] Buscar seguindo,
+- [x] Atualização de senha,
 - [ ] Continua...
 
