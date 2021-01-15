@@ -42,7 +42,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	//fmt.Println("ID banco para compara>>>>", usuariodb.ID)
 	//Compara as senhas
-	if erro = seguranca.VerrificaSenha(usuariodb.Senha, usuario.Senha); erro != nil {
+	if erro = seguranca.VerificaSenha(usuariodb.Senha, usuario.Senha); erro != nil {
 		responses.Erro(w, http.StatusUnauthorized, erro)
 		return
 	}

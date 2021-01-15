@@ -6,6 +6,7 @@ import (
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/responses"
+	"api/src/seguranca"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -38,7 +39,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 
 	db, erro := dbconn.Conectar()
 	if erro != nil {
-		responses.Erro(w, http.StatusInternalServerError, erro)
+		responses.Erro(w, http.StatusInternalServerError, errors.New("Não foi possivel conectar ao banco de dados"))
 		return
 	}
 	defer db.Close()
@@ -61,7 +62,7 @@ func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
 
 	db, erro := dbconn.Conectar()
 	if erro != nil {
-		responses.Erro(w, http.StatusInternalServerError, erro)
+		responses.Erro(w, http.StatusInternalServerError, errors.New("Não foi possivel conectar ao banco de dados"))
 		return
 	}
 	defer db.Close()
@@ -90,7 +91,7 @@ func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 
 	db, erro := dbconn.Conectar()
 	if erro != nil {
-		responses.Erro(w, http.StatusInternalServerError, erro)
+		responses.Erro(w, http.StatusInternalServerError, errors.New("Não foi possivel conectar ao banco de dados"))
 		return
 	}
 	defer db.Close()
@@ -140,7 +141,7 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 	db, erro := dbconn.Conectar()
 	if erro != nil {
-		responses.Erro(w, http.StatusInternalServerError, erro)
+		responses.Erro(w, http.StatusInternalServerError, errors.New("Não foi possivel conectar ao banco de dados"))
 		return
 	}
 	defer db.Close()
@@ -208,7 +209,7 @@ func SeguirUsuario(w http.ResponseWriter, r *http.Request) {
 
 	db, erro := dbconn.Conectar()
 	if erro != nil {
-		responses.Erro(w, http.StatusInternalServerError, erro)
+		responses.Erro(w, http.StatusInternalServerError, errors.New("Não foi possivel conectar ao banco de dados"))
 		return
 	}
 	defer db.Close()
@@ -243,7 +244,7 @@ func DeixarDeSeguirUsuario(w http.ResponseWriter, r *http.Request) {
 
 	db, erro := dbconn.Conectar()
 	if erro != nil {
-		responses.Erro(w, http.StatusInternalServerError, erro)
+		responses.Erro(w, http.StatusInternalServerError, errors.New("Não foi possivel conectar ao banco de dados"))
 		return
 	}
 	defer db.Close()
@@ -269,7 +270,7 @@ func BuscarSeguidores(w http.ResponseWriter, r *http.Request) {
 
 	db, erro := dbconn.Conectar()
 	if erro != nil {
-		responses.Erro(w, http.StatusInternalServerError, erro)
+		responses.Erro(w, http.StatusInternalServerError, errors.New("Não foi possivel conectar ao banco de dados"))
 		return
 	}
 	defer db.Close()
@@ -308,4 +309,67 @@ func BuscarSeguindo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responses.JSON(w, http.StatusOK, usuarios)
+}
+
+//AtualizarSenha permite atualizar a senha de um usuário
+func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
+	usuarioIDToken, erro := autentication.ExtrairUsuarioID(r)
+	if erro != nil {
+		responses.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
+	params := mux.Vars(r)
+	usuarioID, erro := strconv.ParseUint(params["usuarioId"], 10, 64)
+	if erro != nil {
+		responses.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	if usuarioIDToken != usuarioID {
+		responses.Erro(w, http.StatusForbidden, errors.New("Ai você já quer demais, atualizar senha de outro não pode"))
+		return
+	}
+
+	corpoRequisicao, erro := ioutil.ReadAll(r.Body)
+
+	var senha models.Senha
+	if erro = json.Unmarshal(corpoRequisicao, &senha); erro != nil {
+		responses.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := dbconn.Conectar()
+	if erro != nil {
+		responses.Erro(w, http.StatusInternalServerError, errors.New("Não foi possivel conectar ao banco de dados"))
+		return
+	}
+
+	defer db.Close()
+
+	repositorio := repositories.NovoRepositorioDeUsuarios(db)
+	senhadb, erro := repositorio.BuscarSenha(usuarioID)
+	if erro != nil {
+		responses.Erro(w, http.StatusInternalServerError, errors.New("Não foi possivel buscar a senha solicitada"))
+		return
+	}
+
+	if erro = seguranca.VerificaSenha(senhadb, senha.Atual); erro != nil {
+		responses.Erro(w, http.StatusUnauthorized, errors.New("Senha não são as mesmas"))
+		return
+	}
+
+	senhaHash, erro := seguranca.Hash(senha.Nova)
+	if erro != nil {
+		responses.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	if erro = repositorio.AtualizarSenha(usuarioID, string(senhaHash)); erro != nil {
+		responses.Erro(w, http.StatusInternalServerError, errors.New("Não foi possivel atualizar a senha"))
+		return
+	}
+
+	responses.JSON(w, http.StatusNoContent, nil)
+
 }
