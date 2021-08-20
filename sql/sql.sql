@@ -10,7 +10,7 @@ CREATE TABLE usuarios (
     nickname VARCHAR(50) NOT NULL unique,
     email VARCHAR(50) NOT NULL unique,
     senha VARCHAR(50) NOT NULL unique,
-    criadoEm timestampt default current_timestamp
+    criadoEm timestamp default current_timestamp
 ) ENGINE=INNODB;
 
 CREATE Table seguidores(
