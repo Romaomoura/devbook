@@ -43,7 +43,7 @@ func (repositorio Usuarios) Criar(seguindo models.Usuario) (uint64, error) {
 
 //Buscar retorna todos os usuários que atendam ao filtro nome ou nickname
 func (repositorio Usuarios) Buscar(nomeOuNickname string) ([]models.Usuario, error) {
-	nomeOuNickname = fmt.Sprintf("%%%s%%", nomeOuNickname) //%nomeOuNickname
+	nomeOuNickname = fmt.Sprintf("%%%s%%", nomeOuNickname) //%nomeOuNickname%
 
 	linhas, erro := repositorio.db.Query(
 		"SELECT id, nome, nickname, email, criadoEm FROM usuarios WHERE nome LIKE ? OR nickname LIKE ?",

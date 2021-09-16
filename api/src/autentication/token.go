@@ -1,7 +1,6 @@
 package autentication
 
 import (
-	"api/src/config"
 	"errors"
 	"fmt"
 	"net/http"
@@ -10,11 +9,13 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+
+	"api/src/config"
 )
 
 //CriarToken retorna um token assinado com as permissões do usuario
 func CriarToken(usuarioID uint64) (string, error) {
-	fmt.Println("Criar token desse ID >>>>   ", usuarioID)
+	//fmt.Println("Criar token desse ID >>>>   ", usuarioID)
 	permissoes := jwt.MapClaims{}
 	permissoes["authorized"] = true
 	permissoes["exp"] = time.Now().Add(time.Hour * 6).Unix()
@@ -62,12 +63,12 @@ func ExtrairUsuarioID(r *http.Request) (uint64, error) {
 	}
 
 	if permissoes, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		fmt.Println(permissoes)
+		//fmt.Println(permissoes)
 		usuarioID, erro := strconv.ParseUint(fmt.Sprintf("%.0f", permissoes["usuarioId"]), 10, 64)
 		if erro != nil {
 			return 0, erro
 		}
-		fmt.Println("Esse é o ID", usuarioID)
+		//fmt.Println("Esse é o ID", usuarioID)
 		return usuarioID, nil
 	}
 

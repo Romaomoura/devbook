@@ -9,6 +9,7 @@ import (
 	"api/src/seguranca"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -48,7 +49,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token, erro := autentication.CriarToken(usuariodb.ID)
-	//fmt.Println("ID para criar token>>>>", usuariodb.ID)
+	fmt.Println("ID para criar token>>>>", usuariodb.ID)
 	if erro == nil && usuariodb.ID == 0 {
 		responses.Erro(w, http.StatusInternalServerError, errors.New("Id nulo ou zero"))
 		return
