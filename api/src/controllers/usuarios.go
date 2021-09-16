@@ -1,12 +1,6 @@
 package controllers
 
 import (
-	"api/src/autentication"
-	"api/src/dbconn"
-	"api/src/models"
-	"api/src/repositories"
-	"api/src/responses"
-	"api/src/seguranca"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -15,6 +9,13 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+
+	"api/src/autentication"
+	"api/src/dbconn"
+	"api/src/models"
+	"api/src/repositories"
+	"api/src/responses"
+	"api/src/seguranca"
 )
 
 //CriarUsuario insere um usuario no banco de dados
@@ -238,7 +239,7 @@ func DeixarDeSeguirUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if seguidorID == usuarioID {
-		responses.Erro(w, http.StatusBadRequest, errors.New("Você está condenado a sua propria companhia, ha ha ha"))
+		responses.Erro(w, http.StatusForbidden, errors.New("Você está condenado a sua propria companhia, ha ha ha"))
 		return
 	}
 

@@ -1,9 +1,10 @@
 package repositories
 
 import (
-	"api/src/models"
 	"database/sql"
 	"fmt"
+
+	"api/src/models"
 )
 
 //Usuarios representa um repositorio de usuários
@@ -136,7 +137,7 @@ func (repositorio Usuarios) Deletar(ID uint64) error {
 	return nil
 }
 
-//BuscarPorEmail busca um usuar no banco de dados pelo email e retorna o seu ID e SENHA com hash.
+//BuscarPorEmail busca um usuario no banco de dados pelo email e retorna o seu ID e SENHA com hash.
 func (repositorio Usuarios) BuscarPorEmail(email string) (models.Usuario, error) {
 	linha, erro := repositorio.db.Query("SELECT id, senha FROM usuarios WHERE email = ?", email)
 	if erro != nil {
@@ -159,7 +160,7 @@ func (repositorio Usuarios) BuscarPorEmail(email string) (models.Usuario, error)
 //Seguir permite que um usuário siga outro
 func (repositorio Usuarios) Seguir(usuarioID, seguindoID uint64) error {
 	statement, erro := repositorio.db.Prepare(
-		"insert ignore into seguindoes (usuario_id, seguindo_id) values (?, ?)",
+		"insert ignore into seguidores (usuario_id, seguidor_id) values (?, ?)",
 	)
 	if erro != nil {
 		return erro
@@ -175,7 +176,7 @@ func (repositorio Usuarios) Seguir(usuarioID, seguindoID uint64) error {
 //DeixarDeSeguir permite que um usuário deixe de seguir outro
 func (repositorio Usuarios) DeixarDeSeguir(usuarioID, seguindoID uint64) error {
 	statement, erro := repositorio.db.Prepare(
-		"delete from seguindoes where usuario_id = ? and seguindo_id = ?",
+		"delete from seguidores where usuario_id = ? and seguidor_id = ?",
 	)
 	if erro != nil {
 		return erro
