@@ -192,8 +192,10 @@ func (repositorio Usuarios) DeixarDeSeguir(usuarioID, seguindoID uint64) error {
 //BuscarSeguidores retorna todos os seguindoes de um usuário
 func (repositorio Usuarios) BuscarSeguidores(usuarioID uint64) ([]models.Usuario, error) {
 	linhas, erro := repositorio.db.Query(`
-		select u.id, u.nome, u.nickname, u.email, u.criadoEm from usuarios u 
-		inner join seguidores s on u.id = s.seguidor_id 
+		select u.id, u.nome, u.nickname, u.email, u.criadoEm 
+			from usuarios u 
+			inner join seguidores s 
+				on u.id = s.seguidor_id 
 		where s.usuario_id = ? `, usuarioID)
 
 	if erro != nil {
@@ -225,8 +227,10 @@ func (repositorio Usuarios) BuscarSeguidores(usuarioID uint64) ([]models.Usuario
 //BuscarSeguindo retorna todos os usuários que um determinado usuário segue
 func (repositorio Usuarios) BuscarSeguindo(usuarioID uint64) ([]models.Usuario, error) {
 	linhas, erro := repositorio.db.Query(`
-		select u.id, u.nome, u.nickname, u.email, u.criadoEm from usuarios u 
-		inner join seguidores s on u.id = s.usuario_id 
+		select u.id, u.nome, u.nickname, u.email, u.criadoEm 
+			from usuarios u 
+			inner join seguidores s 
+				on u.id = s.usuario_id 
 		where s.seguidor_id = ? `, usuarioID)
 
 	if erro != nil {

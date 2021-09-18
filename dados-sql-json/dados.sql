@@ -11,7 +11,14 @@ VALUES
 (1, 3), (1, 24), (3, 20), (20, 1), (20, 3),
 (22, 23), (23, 30), (31, 25), (3, 25), (24, 1);
 
+use devbook
 
 select * from usuarios;
 
 select * from seguidores;
+
+select u.id, u.nome, u.nickname, u.email, u.criadoEm 
+    from usuarios u 
+    inner join seguidores s 
+         on u.id = s.seguidor_id 
+where s.usuario_id = 1;

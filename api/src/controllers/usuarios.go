@@ -356,7 +356,7 @@ func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if erro = seguranca.VerificaSenha(senhadb, senha.Atual); erro != nil {
-		responses.Erro(w, http.StatusUnauthorized, errors.New("Senha não são as mesmas"))
+		responses.Erro(w, http.StatusUnauthorized, errors.New("Ops, as senhas não são iguais."))
 		return
 	}
 
