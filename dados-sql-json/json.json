@@ -1,0 +1,104 @@
+[
+    {
+        "nome": "Romao",
+        "nickname": "romao",
+        "email": "romao@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome": "romao moura",
+        "nickname": "romao2",
+        "email": "romao2@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"João santos",
+        "nickname": "joao",
+        "email": "João@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Jacson Five",
+        "nickname": "Jacson",
+        "email": "Jacson@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Luiza Sonsa",
+        "nickname": "Luiza",
+        "email": "Luiza@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"João Paulo",
+        "nickname": "jp",
+        "email": "jp@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Jeremias Maconheiro sem Vergonha",
+        "nickname": "Jeremias",
+        "email": "Jeremias@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Jordania santos",
+        "nickname": "Jordania",
+        "email": "Jordania@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Jessica santos",
+        "nickname": "Jessica",
+        "email": "Jessica@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Raimundo santos",
+        "nickname": "Raimundo",
+        "email": "Raimundo@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Paulo santos",
+        "nickname": "Paulo",
+        "email": "Paulo@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Ricardo santos",
+        "nickname": "Ricardo",
+        "email": "Ricardo@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Santanna santos",
+        "nickname": "Santanna",
+        "email": "Santanna@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Felicio santos",
+        "nickname": "Felicio",
+        "email": "Felicio@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Jonatan santos",
+        "nickname": "Jonatan",
+        "email": "Jonatan@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Pedro santos",
+        "nickname": "Pedro",
+        "email": "Pedro@gmail.com",
+        "senha": "123456"
+    },
+    {
+        "nome" :"Maria santos",
+        "nickname": "Maria",
+        "email": "Maria@gmail.com",
+        "senha": "123456"
+    }
+]

@@ -36,5 +36,6 @@
 - [x] Buscar seguidores,
 - [x] Buscar seguindo,
 - [x] Atualização de senha,
+- [x] Criando estrutura para as publicações,
 - [ ] Continua...
 

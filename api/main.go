@@ -8,16 +8,16 @@ import (
 	"net/http"
 )
 
-/* func init() {
-	chave := make([]byte, 64)
+// func init() {
+// 	chave := make([]byte, 64)
 
-	if _, erro := rand.Read(chave); erro != nil {
-		log.Fatal(erro)
-	}
+// 	if _, erro := rand.Read(chave); erro != nil {
+// 		log.Fatal(erro)
+// 	}
 
-	stringbse64 := base64.StdEncoding.EncodeToString(chave)
-	fmt.Println(stringbse64)
-} */
+// 	stringbse64 := base64.StdEncoding.EncodeToString(chave)
+// 	fmt.Println(stringbse64)
+// }
 
 func main() {
 	config.Carregar()

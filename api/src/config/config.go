@@ -38,5 +38,6 @@ func Carregar() {
 		os.Getenv("DB_SENHA"),
 		os.Getenv("DB_NOME"),
 	)
+	fmt.Println(StringConexaoDB)
 	Secretkey = []byte(os.Getenv("SECRET_KEY"))
 }

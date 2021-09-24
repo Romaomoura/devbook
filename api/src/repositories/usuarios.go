@@ -1,9 +1,10 @@
 package repositories
 
 import (
-	"api/src/models"
 	"database/sql"
 	"fmt"
+
+	"api/src/models"
 )
 
 //Usuarios representa um repositorio de usuários
@@ -43,7 +44,7 @@ func (repositorio Usuarios) Criar(seguindo models.Usuario) (uint64, error) {
 
 //Buscar retorna todos os usuários que atendam ao filtro nome ou nickname
 func (repositorio Usuarios) Buscar(nomeOuNickname string) ([]models.Usuario, error) {
-	nomeOuNickname = fmt.Sprintf("%%%s%%", nomeOuNickname) //%nomeOuNickname
+	nomeOuNickname = fmt.Sprintf("%%%s%%", nomeOuNickname) //%nomeOuNickname%
 
 	linhas, erro := repositorio.db.Query(
 		"SELECT id, nome, nickname, email, criadoEm FROM usuarios WHERE nome LIKE ? OR nickname LIKE ?",
@@ -136,7 +137,7 @@ func (repositorio Usuarios) Deletar(ID uint64) error {
 	return nil
 }
 
-//BuscarPorEmail busca um usuar no banco de dados pelo email e retorna o seu ID e SENHA com hash.
+//BuscarPorEmail busca um usuario no banco de dados pelo email e retorna o seu ID e SENHA com hash.
 func (repositorio Usuarios) BuscarPorEmail(email string) (models.Usuario, error) {
 	linha, erro := repositorio.db.Query("SELECT id, senha FROM usuarios WHERE email = ?", email)
 	if erro != nil {
@@ -159,7 +160,7 @@ func (repositorio Usuarios) BuscarPorEmail(email string) (models.Usuario, error)
 //Seguir permite que um usuário siga outro
 func (repositorio Usuarios) Seguir(usuarioID, seguindoID uint64) error {
 	statement, erro := repositorio.db.Prepare(
-		"insert ignore into seguindoes (usuario_id, seguindo_id) values (?, ?)",
+		"insert ignore into seguidores (usuario_id, seguidor_id) values (?, ?)",
 	)
 	if erro != nil {
 		return erro
@@ -175,7 +176,7 @@ func (repositorio Usuarios) Seguir(usuarioID, seguindoID uint64) error {
 //DeixarDeSeguir permite que um usuário deixe de seguir outro
 func (repositorio Usuarios) DeixarDeSeguir(usuarioID, seguindoID uint64) error {
 	statement, erro := repositorio.db.Prepare(
-		"delete from seguindoes where usuario_id = ? and seguindo_id = ?",
+		"delete from seguidores where usuario_id = ? and seguidor_id = ?",
 	)
 	if erro != nil {
 		return erro
@@ -191,8 +192,10 @@ func (repositorio Usuarios) DeixarDeSeguir(usuarioID, seguindoID uint64) error {
 //BuscarSeguidores retorna todos os seguindoes de um usuário
 func (repositorio Usuarios) BuscarSeguidores(usuarioID uint64) ([]models.Usuario, error) {
 	linhas, erro := repositorio.db.Query(`
-		select u.id, u.nome, u.nickname, u.email, u.criadoEm from usuarios u 
-		inner join seguidores s on u.id = s.seguidor_id 
+		select u.id, u.nome, u.nickname, u.email, u.criadoEm 
+			from usuarios u 
+			inner join seguidores s 
+				on u.id = s.seguidor_id 
 		where s.usuario_id = ? `, usuarioID)
 
 	if erro != nil {
@@ -224,8 +227,10 @@ func (repositorio Usuarios) BuscarSeguidores(usuarioID uint64) ([]models.Usuario
 //BuscarSeguindo retorna todos os usuários que um determinado usuário segue
 func (repositorio Usuarios) BuscarSeguindo(usuarioID uint64) ([]models.Usuario, error) {
 	linhas, erro := repositorio.db.Query(`
-		select u.id, u.nome, u.nickname, u.email, u.criadoEm from usuarios u 
-		inner join seguidores s on u.id = s.usuario_id 
+		select u.id, u.nome, u.nickname, u.email, u.criadoEm 
+			from usuarios u 
+			inner join seguidores s 
+				on u.id = s.usuario_id 
 		where s.seguidor_id = ? `, usuarioID)
 
 	if erro != nil {
