@@ -36,6 +36,9 @@
 - [x] Buscar seguidores,
 - [x] Buscar seguindo,
 - [x] Atualização de senha,
-- [x] Criando estrutura para as publicações,
+- [x] Criando modelo para as publicações
+- [x] Criando Rotas de publicações
+- [x] Método Criar publicação
+- [x] Método validar e formatar publicação
 - [ ] Continua...
 

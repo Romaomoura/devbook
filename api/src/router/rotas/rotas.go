@@ -1,10 +1,11 @@
 package rotas
 
 import (
-	"api/src/middlewares"
 	"net/http"
 
 	"github.com/gorilla/mux"
+
+	"api/src/middlewares"
 )
 
 //Rota representa todas as rotas da api
@@ -19,6 +20,7 @@ type Rota struct {
 func Configurar(r *mux.Router) *mux.Router {
 	rotas := rotasUsuarios
 	rotas = append(rotas, rotaLogin)
+	rotas = append(rotas, rotasPublicacoes...) //slices de rotas de publicacoes
 
 	for _, rota := range rotas {
 
