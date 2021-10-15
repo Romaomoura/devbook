@@ -38,3 +38,32 @@ func (repositories Publicacoes) Criar(publicacao models.Publicacao) (uint64, err
 
 	return uint64(ultimoIDInserido), nil
 }
+
+//BuscarPorID trás uma unica publicação do banco de dados
+func (repositories Publicacoes) BuscarPorID(publicacaoID uint64) (models.Publicacao, error) {
+	linha, erro := repositories.db.Query(`select p.*, u.nickname from publicacoes p
+	  										inner join usuarios u on u.id = p.autor_id
+	  										where p.id = ?`, publicacaoID)
+	if erro != nil {
+		return models.Publicacao{}, erro
+	}
+	defer linha.Close()
+
+	var publicacao models.Publicacao
+
+	if linha.Next() {
+		if erro = linha.Scan(
+			&publicacao.ID,
+			&publicacao.Titulo,
+			&publicacao.Conteudo,
+			&publicacao.AutorID,
+			&publicacao.Curtidas,
+			&publicacao.CriadaEm,
+			&publicacao.AutorNick,
+		); erro != nil {
+			return models.Publicacao{}, erro
+		}
+	}
+	// fmt.Println(publicacao)
+	return publicacao, nil
+}

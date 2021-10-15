@@ -40,5 +40,6 @@
 - [x] Criando Rotas de publicações
 - [x] Método Criar publicação
 - [x] Método validar e formatar publicação
+- [x] Implementando função para buscar uma publicação
 - [ ] Continua...
 
